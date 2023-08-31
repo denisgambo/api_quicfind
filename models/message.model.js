@@ -21,7 +21,7 @@ const messageSchema = mongoose.Schema(
         },
         annonce: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "anonnce",
+            ref: "annonces",
             required: false
         },
         date_envoi:{

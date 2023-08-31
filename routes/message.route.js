@@ -7,5 +7,5 @@ const router = express.Router()
 router.post("/", createMessage)
 
 ////selectionner les messages d'un utilisateur 
-router.get("/:id", getMessageByUser)
+router.get("/message_par_destinataire", getMessageByUser)
 module.exports = router;
