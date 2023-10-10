@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema(
             type: String,
             required: true
         },
+          bloquer: {
+            type: Boolean,
+            required: false
+        },
 
         pays: {
             type: mongoose.Schema.Types.ObjectId,

@@ -1,12 +1,12 @@
-const messageModel = require("../models/message.model")
+const signalementModel = require("../controllers/signalement.controller")
 const userModel = require("../models/user.model")
 // Créer un message
-module.exports.createMessage = async (req, res) => {
+module.exports.createSignalement = async (req, res) => {
  try {
-       const message = await messageModel.create({
+       const signalement = await signalementModel.create({
         ...req.body,
     });
-    res.status(200).json(message);
+    res.status(200).json(signalement);
  } catch (error) {
     console.log(error)
         res.status(500).json({ message: "Erreur lors de l'envoi du message." });
@@ -18,22 +18,22 @@ module.exports.createMessage = async (req, res) => {
 
 
 //selectionner les messages d'un destinataire 
-module.exports.getMessageByUser = async (req, res) => {
-  const destinataire = req.query.destinataire;
+module.exports.getSignalementByUser = async (req, res) => {
+  const suspect = req.query.suspect;
 
   try {
-    let messages = await messageModel
-      .find({ destinataire: destinataire })
-      .populate('expediteur', 'nom prenom statut telephone email photo_profil')
-      .populate('destinataire', 'nom prenom statut telephone email')
+    let signalements = await signalementModel
+      .find({ suspect: suspect })
+      .populate('auteur', 'nom prenom statut telephone email photo_profil')
+      .populate('suspect', 'nom prenom statut telephone email')
       .populate('annonce', '_id titre description')
       // .populate('annonce', 'nom')
       .exec();
 
-    if (messages) {
-      res.status(200).json({ messages });
+    if (signalements) {
+      res.status(200).json({ signalements });
     } else {
-      res.status(404).json({ message: "Aucun message trouvé." });
+      res.status(404).json({ message: "Aucun signalement trouvé." });
     }
   } catch (error) {
     console.log(error)
@@ -42,19 +42,19 @@ module.exports.getMessageByUser = async (req, res) => {
 };
 
 //Supprimer un message
-module.exports.supprimerMessage = async (req, res) => {
+module.exports.supprimerSignalement = async (req, res) => {
   const id = req.params.id; // Utiliser req.params au lieu de req.body pour récupérer l'ID
 
   try {
     // Recherche de l'équipement par son ID
-    let message = await messageModel.findById(id);
+    let signalement = await signalementModel.findById(id);
 
-    if (!message) {
+    if (!signalement) {
       return res.status(404).json({ message: "message non trouvée" });
     }
 
     // Supprimer l'annonce
-    await messageModel.findByIdAndRemove(id);
+    await signalementModel.findByIdAndRemove(id);
 
     // Renvoyer une réponse de succès
     res.status(200).json({ message: "message supprimé avec succès" });

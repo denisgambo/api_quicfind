@@ -1,9 +1,11 @@
 const AnnonceModel = require('../models/annonce.model')
+const mongoose = require("mongoose")
 
+// module.exports.createAnnonce = async (req, res)=>
 module.exports.createAnnonce = async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
     try {
-      if(req.file.filename){
+      if(req.file){
         const photo = `${req.protocol}://${req.get('host')}/images/images_annonces/${req.file.filename}`;
     const annonce = await AnnonceModel.create({
       
@@ -153,6 +155,7 @@ module.exports.updateAnnonce = async (req, res) => {
 
 //Selectionner une annonce par l'id
 module.exports.findAnnonceById = async (req, res) => {
+ 
   const id = req.params.id;
 
   try {

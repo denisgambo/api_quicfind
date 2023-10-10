@@ -49,6 +49,12 @@ app.use("/annonces", require('./routes/annonce.route'))
 app.use("/categorie", require('./routes/categorie.route'))
 app.use("/pays", require('./routes/pays.route'))
 app.use("/messages", require('./routes/message.route'))
+app.use("/avis", require('./routes/avi.route'))
+app.use("/testmess", require('./routes/testmessage.route'))
+app.use("/signaler", require('./routes/signalement.route'))
+
+
+
 
 // ...
 

@@ -1,7 +1,8 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const userModel = require("../models/user.model");
 
 
 
@@ -31,7 +32,7 @@ module.exports.createUser = async (req, res) => {
     });
     res.status(200).json(user);
       }else{
-        const user = await equipementModel.create({
+        const user = await userModel.create({
       
            nom: req.body.nom,
         prenom: req.body.prenom,
@@ -79,6 +80,8 @@ module.exports.Login = async (req, res, next) => {
       photo_profil: user.photo_profil,
       statut: user.statut,
       bloquer: user.bloquer,
+      telephone:user.telephone,
+      email:user.email,
       token: jwt.sign(
         { userId: user._id },
         'RANDOM_TOKEN_SECRET',
@@ -92,15 +95,19 @@ module.exports.Login = async (req, res, next) => {
 };
 
 module.exports.getAllUsers = async (req, res) => {
-    const allUsers = await UserModel.find();
+   try {
+     const allUsers = await UserModel.find();
     res.status(200).json(allUsers);
+   } catch (error) {
+    res.status(500).json({message:"Une erreur s'est produite lors de la recupération de l'utilisateurs"})
+   }
 }
 
-/* //find user by id
+//find user by id
 module.exports.findUserById = async (req, res) => {
     const user = await UserModel.findById(req.params.id);
     res.status(200).json(user);
-} */
+} 
 
 //create a user
 /* module.exports.createUser = async (req, res) => {
@@ -123,7 +130,7 @@ module.exports.editUser = async (req, res) => {
     if (!user) {
         res.status(400).json({ message: "Cet utilisateur n\'existe pas" });
     } else {
-        if(req.file.filename){
+        if(req.file){
                   const photo_profil = `${req.protocol}://${req.get('host')}/images/photos_profil/${req.file.filename}`;
                   req.body.photo_profil = photo_profil
 
@@ -132,10 +139,11 @@ module.exports.editUser = async (req, res) => {
         }else{
            const updateUser = await UserModel.findByIdAndUpdate(user, req.body, { new: true });
         res.status(200).json(updateUser);
+        console.log("réussi")
         }
     }
     } catch (error) {
-      
+      console.log(error)
     }
 }
 
@@ -144,6 +152,7 @@ module.exports.editUser = async (req, res) => {
 //Bloquer ou débloquer un utilisateur
 
 module.exports.bloquerDebloquer = async (req, res) => {
+  // console.log(req.body)
   const id = req.body.id; // ID du consommable à mettre à jour
   const bloquer = req.body.bloquer; 
   try {
@@ -206,3 +215,30 @@ module.exports.updatePassword = async (req, res) => {
     return res.status(500).json(error);
   }
 }
+
+//Change user status
+module.exports.changerStatut = async (req, res) => {
+  console.log(req.body)
+  const id = req.body.id; // ID du consommable à mettre à jour
+  const statut = req.body.statut; 
+  try {
+    // Recherche du consommable par son ID
+    let user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+   
+
+    user.statut=statut
+
+    // Enregistrement des modifications
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Une erreur s'est produite lors de la mise à jour de l'utlisateur :", error);
+    res.status(500).json({ message: "Une erreur s'est produite lors de la mise à jour de l'utlisateur" });
+  }
+};
