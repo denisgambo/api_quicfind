@@ -17,7 +17,7 @@ const AnnonceSchema = mongoose.Schema(
         
         categorie: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "categorie",
+            ref: "categories",
             required: false
         },
         type:{
